@@ -34,8 +34,8 @@ TextBox::TextBox(int x, int y, int sizeX, int sizeY, sf::Font f , bool jn)
 
 bool TextBox::click_controller(int x, int y)
 {
-	bool controlX = button.getPosition().x <= x && button.getPosition().x + (button.getScale().x * button.getTexture()->getSize().x);
-	bool controlY = button.getPosition().y <= y && button.getPosition().y + (button.getScale().y * button.getTexture()->getSize().y);
+	bool controlX = button.getPosition().x <= x && button.getPosition().x + (button.getScale().x * button.getTexture()->getSize().x) >= x;
+	bool controlY = button.getPosition().y <= y && button.getPosition().y + (button.getScale().y * button.getTexture()->getSize().y) >= y;
 	if (controlX && controlY)
 	{
 		string = ""; writing = true; return true;
