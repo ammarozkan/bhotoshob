@@ -1,6 +1,5 @@
 #include "QuickSFML.h"
 
-
 QuickWindow::QuickWindow(sf::VideoMode videomode, std::string s,int frame)
 	: window(videomode, s)
 {
@@ -90,4 +89,58 @@ void QuickWindow::setZoom(int z)
 int QuickWindow::getZoom()
 {
 	return zoom;
+}
+
+
+/* Functions */
+
+
+bool QuickFunctions::clickController(int posX, int posY, int sizeX, int sizeY, int clickX, int clickY)
+{
+	return posX <= clickX && posX + sizeX >= clickX && posY <= clickY && posY + sizeY >= clickY;
+}
+
+bool QuickFunctions::clickController(sf::Sprite sprite, int clickX, int clickY)
+{
+	return clickController(sprite.getPosition().x, sprite.getPosition().y, sprite.getTexture()->getSize().x * sprite.getScale().x, sprite.getTexture()->getSize().y * sprite.getScale().y, clickX, clickY);
+}
+
+bool QuickFunctions::clickController(sf::Vector2i p, sf::Vector2i s, sf::Vector2i cp)
+{
+	return clickController(p.x, p.y, s.x, s.y, cp.x, cp.y);
+}
+
+bool QuickFunctions::clickController(sf::Sprite s, sf::Vector2i clickPosition)
+{
+	return clickController(s.getPosition().x, s.getPosition().y, s.getTexture()->getSize().x * s.getScale().x, s.getTexture()->getSize().y * s.getScale().y, clickPosition.x, clickPosition.y);
+}
+
+
+
+/* Quick Object */
+
+void QuickBreak::click(sf::Vector2i cp)
+{
+	if (!clicking)
+	{
+		first_click = cp; clicking = true;
+	}
+}
+
+sf::Vector2i QuickBreak::update(sf::Vector2i cp)
+{
+	if (clicking)
+	{
+		sf::Vector2i result = first_click - cp;
+		first_click = cp;
+		return result;
+	}
+	else return sf::Vector2i(0, 0);
+}
+
+sf::Vector2i QuickBreak::unclick(sf::Vector2i cp)
+{
+	sf::Vector2i result = update(cp);
+	clicking = false;
+	return result;
 }

@@ -24,12 +24,6 @@ int main(int argc, char* argv[])
 		selector_button.setScale(1, 0.5);
 		selector_button.setPosition(300, 250);
 		selector.addButton(selector_button);
-		selector_button.setPosition(0, 0);
-		selector.addButton(selector_button);
-		selector_button.setPosition(100, 0);
-		selector.addButton(selector_button);
-		selector_button.setPosition(200, 0);
-		selector.addButton(selector_button);
 
 		spec = selector.core();
 	}

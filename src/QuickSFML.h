@@ -2,6 +2,14 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+class QuickFunctions
+{
+public:
+	bool static clickController(int posX, int posY, int sizeX, int sizeY, int clickX, int clickY);
+	bool static clickController(sf::Sprite sprite, int clickX, int clickY);
+	bool static clickController(sf::Vector2i position, sf::Vector2i size, sf::Vector2i clickPosition);
+	bool static clickController(sf::Sprite sprite, sf::Vector2i clickPosition);
+};
 
 class QuickWindow
 {
@@ -27,4 +35,15 @@ public:
 	void close();
 	void clear(sf::Color color = sf::Color(0,0,0,255));
 	void display();
+};
+
+
+class QuickBreak
+{
+private:
+	sf::Vector2i first_click; bool clicking = false;
+public:
+	void click(sf::Vector2i click_pos);
+	sf::Vector2i unclick(sf::Vector2i click_pos);
+	sf::Vector2i update(sf::Vector2i click_pos);
 };

@@ -233,7 +233,7 @@ bool QCore::CoreController(sf::Event event)
 	}
 	else if (event.type == sf::Event::MouseButtonPressed)
 	{
-		if (event.mouseButton.x > panelXPos)
+		if (event.mouseButton.x > panelXPos && event.mouseButton.button == sf::Mouse::Left)
 		{
 			button_group_id id = getClickId(event.mouseButton.x, event.mouseButton.y);
 			if (id.button_group == 0) select_image(id.button);
@@ -248,6 +248,31 @@ bool QCore::CoreController(sf::Event event)
 			}
 			else if (id.button_group != -1 && id.button != -1) std::cout << "Clicked:" << id.button_group << " " << id.button << std::endl;
 		}
+		else
+		{
+			pointer.click(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+		}
+	}
+	else if (event.type == sf::Event::MouseMoved)
+	{
+
+		if (selected_image != -1)
+		{
+			sf::Vector2i after = pointer.update(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+			sf::Vector2i result = sf::Vector2i(sprites[selected_image].getPosition().x, sprites[selected_image].getPosition().y) - after;
+			sprites[selected_image].setPosition(sf::Vector2f(result.x, result.y));
+		}
+	}
+	else if (event.type == sf::Event::MouseButtonReleased)
+	{
+		sf::Vector2i after = pointer.unclick(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+		std::cout << "Released after " << after.x << " " << after.y << std::endl;
+		if (selected_image != -1)
+		{
+			sf::Vector2i result = sf::Vector2i(sprites[selected_image].getPosition().x, sprites[selected_image].getPosition().y) - after;
+			sprites[selected_image].setPosition(sf::Vector2f(result.x, result.y));
+		}
+		else std::cout << "Not selected" << std::endl;
 	}
 	else if (event.type == sf::Event::KeyPressed)
 	{

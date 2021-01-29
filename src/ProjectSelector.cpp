@@ -3,21 +3,20 @@ ProjectSelector::ProjectSelector(std::string font_path)
 	: window(sf::VideoMode(400, 300), "Selector")
 {
 	font.loadFromFile(font_path); nameBox.init(200, 200, 100, 50, font);
+	resolutionBox.init(0, 0, 100, 50, font,true);
+	resolutionBox2.init(120, 0, 100, 50, font, true);
 
 	result.render_size[0] = 1024; result.render_size[1] = 768;
 	result.output_name = "output.png";
 	result.first_input_img = "input.png";
+}
 
-	resolution_text.setString(std::to_string(result.render_size[0]));
-
-	resolution_text.setFont(font);
-	resolution_text.setPosition(0, 0);
-	resolution_text.setCharacterSize(30);
-	resolution_text2.setFont(font);
-	resolution_text2.setPosition(100, 0);
-	resolution_text2.setCharacterSize(30);
-	update_visuals();
-
+void ProjectSelector::close()
+{
+	result.first_input_img = nameBox.getString().toAnsiString();
+	result.render_size[0] = atoi(resolutionBox.getString().toAnsiString().c_str());
+	result.render_size[1] = atoi(resolutionBox2.getString().toAnsiString().c_str());
+	window.close();
 }
 
 void ProjectSelector::addButton(sf::Sprite button)
@@ -44,98 +43,22 @@ int ProjectSelector::get_clicked_button_id(int x, int y)
 void ProjectSelector::click(int x, int y)
 {
 	int click_id = get_clicked_button_id(x, y);
-	if (click_id == 0) window.close();
-	else if (click_id == 1) { tX = true; tY = false; tName = false; resolution_text.setString(""); }
-	else if (click_id == 2) { tX = false; tY = true; tName = false; resolution_text2.setString(""); }
-	else if (click_id == 3) { tX = false; tY = false; tName = true; }
-}
-
-void ProjectSelector :: update_visuals()
-{
-	resolution_text.setString(std::to_string(result.render_size[0]));
-	resolution_text2.setString(std::to_string(result.render_size[1]));
-}
-
-
-void ProjectSelector::change_resolution(int res)
-{
-	if (rc[res] > 2) rc[res] = 0;
-
-	if (rc[res] == 0) result.render_size[res] = 1280;
-	else if (rc[res] == 1) result.render_size[res] = 720;
-	else if (rc[res] == 2) result.render_size[res] = 600;
-	rc[res]++;
-	update_visuals();
+	if (click_id == 0) close();
 }
 
 void ProjectSelector::events(sf::Event e)
 {
-	if (e.type == sf::Event::Closed)
-	{
-		result.first_input_img = nameBox.getString().toAnsiString();
-		window.close();
-	}
+	if (e.type == sf::Event::Closed) close();
 	else if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
 	{
 		if (nameBox.click_controller(e.mouseButton.x, e.mouseButton.y));
+		else if (resolutionBox.click_controller(e.mouseButton.x, e.mouseButton.y));
+		else if (resolutionBox2.click_controller(e.mouseButton.x, e.mouseButton.y));
 		else click(e.mouseButton.x, e.mouseButton.y);
 	}
 	else if (nameBox.write_controller(e));
-	else if (e.type == sf::Event::KeyPressed)
-	{
-		if (tX)
-		{
-			if (e.key.code == sf::Keyboard::Num0) input += "0";
-			else if (e.key.code == sf::Keyboard::Num1) input += "1";
-			else if (e.key.code == sf::Keyboard::Num2) input += "2";
-			else if (e.key.code == sf::Keyboard::Num3) input += "3";
-			else if (e.key.code == sf::Keyboard::Num4) input += "4";
-			else if (e.key.code == sf::Keyboard::Num5) input += "5";
-			else if (e.key.code == sf::Keyboard::Num6) input += "6";
-			else if (e.key.code == sf::Keyboard::Num7) input += "7";
-			else if (e.key.code == sf::Keyboard::Num8) input += "8";
-			else if (e.key.code == sf::Keyboard::Num9) input += "9";
-			else if (e.key.code == sf::Keyboard::Enter)
-			{
-				result.render_size[0] = atoi(input.toAnsiString().c_str());
-				input = ""; tX = false;
-				update_visuals();
-			}
-		}
-		else if (tY)
-		{
-			if (e.key.code == sf::Keyboard::Num0) input += "0";
-			else if (e.key.code == sf::Keyboard::Num1) input += "1";
-			else if (e.key.code == sf::Keyboard::Num2) input += "2";
-			else if (e.key.code == sf::Keyboard::Num3) input += "3";
-			else if (e.key.code == sf::Keyboard::Num4) input += "4";
-			else if (e.key.code == sf::Keyboard::Num5) input += "5";
-			else if (e.key.code == sf::Keyboard::Num6) input += "6";
-			else if (e.key.code == sf::Keyboard::Num7) input += "7";
-			else if (e.key.code == sf::Keyboard::Num8) input += "8";
-			else if (e.key.code == sf::Keyboard::Num9) input += "9";
-			else if (e.key.code == sf::Keyboard::Enter)
-			{
-				result.render_size[1] = atoi(input.toAnsiString().c_str());
-				input = ""; tY = false;
-				update_visuals();
-			}
-		}
-	}
-
-	if (e.type == sf::Event::TextEntered)
-	{
-		if (tName)
-		{
-			if (e.key.code == sf::Keyboard::Enter)
-			{
-				result.first_input_img = input;
-				input = ""; tName = false;
-				update_visuals();
-			}
-			else input += e.text.unicode;
-		}
-	}
+	else if (resolutionBox.write_controller(e));
+	else if (resolutionBox2.write_controller(e));
 }
 
 ProjectSelections ProjectSelector::core()
@@ -155,12 +78,11 @@ ProjectSelections ProjectSelector::core()
 
 		window.clear();
 		draw_buttons();
-		window.getWindow()->draw(resolution_text);
-		window.getWindow()->draw(resolution_text2);
 		window.getWindow()->draw(input_text);
 		nameBox.drawTextBox(window.getWindow());
+		resolutionBox.drawTextBox(window.getWindow());
+		resolutionBox2.drawTextBox(window.getWindow());
 		window.display();
-
 	}
 	return result;
 }

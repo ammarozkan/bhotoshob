@@ -19,13 +19,6 @@ struct button_group_id
 	int button_group, button;
 };
 
-class Panel
-{
-private:
-
-};
-
-
 
 class QCore
 {
@@ -33,7 +26,7 @@ private:
 	Program program; QuickWindow editor;
 	std::vector<sf::Sprite> sprites; int panelXPos = 600;
 	std::vector<button_group> buttons; int selected_image = -1;
-	std::vector<sf::Texture> textures;
+	std::vector<sf::Texture> textures; QuickBreak pointer;
 public:
 	QCore(sf::Vector2i size);
 

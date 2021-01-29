@@ -1,4 +1,5 @@
 #include "TextBox.h"
+#include "QuickSFML.h"
 
 void TextBox::init(int x, int y, int sizeX, int sizeY, sf::Font f, bool jn)
 {
@@ -15,7 +16,7 @@ void TextBox::init(int x, int y, int sizeX, int sizeY, sf::Font f, bool jn)
 	button.setTexture(text_box_texture);
 }
 
-TextBox::TextBox()
+TextBox::TextBox() : just_number(false)
 {
 
 }
@@ -34,9 +35,7 @@ TextBox::TextBox(int x, int y, int sizeX, int sizeY, sf::Font f , bool jn)
 
 bool TextBox::click_controller(int x, int y)
 {
-	bool controlX = button.getPosition().x <= x && button.getPosition().x + (button.getScale().x * button.getTexture()->getSize().x) >= x;
-	bool controlY = button.getPosition().y <= y && button.getPosition().y + (button.getScale().y * button.getTexture()->getSize().y) >= y;
-	if (controlX && controlY)
+	if (QuickFunctions::clickController(button,x,y))
 	{
 		string = ""; writing = true; return true;
 		text.setString(string);
@@ -44,20 +43,58 @@ bool TextBox::click_controller(int x, int y)
 	else return false;
 }
 
-bool TextBox::write_controller(sf::Event e)
+bool TextBox::letter_write_controller(sf::Event e)
 {
 	if (writing && e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Enter)
 	{
 		writing = false;
-		return true;
 	}
 	else if (writing && e.type == sf::Event::TextEntered)
 	{
 		string += e.text.unicode;
 		text.setString(string);
+	}
+	return (writing && e.type == sf::Event::TextEntered);
+}
+
+bool TextBox::number_write_controller(sf::Event e)
+{
+	if (e.type == sf::Event::KeyPressed && writing)
+	{
+		if (e.key.code == sf::Keyboard::Num0) string += "0";
+		else if (e.key.code == sf::Keyboard::Num1) string += "1";
+		else if (e.key.code == sf::Keyboard::Num2) string += "2";
+		else if (e.key.code == sf::Keyboard::Num3) string += "3";
+		else if (e.key.code == sf::Keyboard::Num4) string += "4";
+		else if (e.key.code == sf::Keyboard::Num5) string += "5";
+		else if (e.key.code == sf::Keyboard::Num6) string += "6";
+		else if (e.key.code == sf::Keyboard::Num7) string += "7";
+		else if (e.key.code == sf::Keyboard::Num8) string += "8";
+		else if (e.key.code == sf::Keyboard::Num9) string += "9";
+		else if (e.key.code == sf::Keyboard::Numpad0) string += "0";
+		else if (e.key.code == sf::Keyboard::Numpad1) string += "1";
+		else if (e.key.code == sf::Keyboard::Numpad2) string += "2";
+		else if (e.key.code == sf::Keyboard::Numpad3) string += "3";
+		else if (e.key.code == sf::Keyboard::Numpad4) string += "4";
+		else if (e.key.code == sf::Keyboard::Numpad5) string += "5";
+		else if (e.key.code == sf::Keyboard::Numpad6) string += "6";
+		else if (e.key.code == sf::Keyboard::Numpad7) string += "7";
+		else if (e.key.code == sf::Keyboard::Numpad8) string += "8";
+		else if (e.key.code == sf::Keyboard::Numpad9) string += "9";
+		else if (e.key.code == sf::Keyboard::Enter) writing = false;
+		text.setString(string);
 		return true;
 	}
-	else return false;
+	return false;
+}
+
+bool TextBox::write_controller(sf::Event e)
+{
+	if (just_number)
+	{
+		return number_write_controller(e);
+	}
+	else return letter_write_controller(e);
 }
 
 void TextBox::drawTextBox(sf::RenderWindow * window)
