@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Light.h"
 
 struct Drawning
 {
@@ -36,7 +35,5 @@ public:
 	void draw(Drawning drawning);
 	void draw(sf::Sprite spr);
 
-	/* Drawning */
-	void drawBox(int posX, int posY, Light light,sf::Color color);
 };
 

@@ -146,17 +146,6 @@ sf::Image Renderer::hand_draw(sf::Image imgForBlue, int limit)
 }
 
 
-void Renderer::drawBox(int posX, int posY, Light light, sf::Color color)
-{
-	float light_r = light.getLightning(sf::Vector3f(posX, posY, 0));
-	color = sf::Color(color.r * light_r, color.g * light_r, color.b * light_r);
-	sf::Image turner; turner.create(100, 100, sf::Color::Black);
-
-
-	for (int i = 0; i < 100; i++) for (int j = 0; j < 100; j++)
-		image.setPixel(i + posX, j + posY, sf::Color(color.r*i/150,color.g,color.b));
-}
-
 
 void Renderer::draw(sf::Image img, sf::Vector2i position)
 {
