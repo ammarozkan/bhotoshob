@@ -9,10 +9,11 @@ QuickWindow::QuickWindow(sf::VideoMode videomode, std::string s,int frame)
 bool QuickWindow::isOpen() { return window.isOpen(); }
 
 
-void QuickWindow::draw(sf::RenderWindow& w, sf::Image img, int zoom, sf::Vector2f pos, sf::Vector2f scale)
+void QuickWindow::draw(sf::RenderWindow& w, sf::Image img, int zoom, sf::Vector2f pos, sf::Vector2f scale, sf::Vector2i camera_pos)
 {
 	sf::Texture resultTexture; resultTexture.loadFromImage(img);
 	sf::Sprite resultSprite; resultSprite.setTexture(resultTexture);
+	resultSprite.setPosition(resultSprite.getPosition() - sf::Vector2f(camera_pos.x, camera_pos.y));
 	resultSprite.setPosition(pos/(float)zoom);
 	resultSprite.scale(scale/(float)zoom);
 	w.draw(resultSprite);
@@ -45,11 +46,12 @@ void QuickWindow::display()
 
 void QuickWindow::draw(sf::Image img,bool zoomLess, sf::Vector2f pos, sf::Vector2f scale)
 {
-	draw(window, img, zoomLess?1: zoom, pos, scale);
+	draw(window, img, zoomLess ? 1 : zoom, pos, scale, position);
 }
 
 void QuickWindow::draw(sf::Sprite spr, bool zoomLess)
 {
+	spr.setPosition(spr.getPosition() - sf::Vector2f(position.x, position.y));
 	spr.setScale(zoomLess ? spr.getScale(): spr.getScale() / (float)zoom);
 	spr.setPosition(zoomLess ? spr.getPosition() : spr.getPosition() / (float)zoom);
 	window.draw(spr);
@@ -57,6 +59,7 @@ void QuickWindow::draw(sf::Sprite spr, bool zoomLess)
 
 void QuickWindow::draw(sf::Text txt, bool zoomLess)
 {
+	txt.setPosition(txt.getPosition() - sf::Vector2f(position.x, position.y));
 	txt.setScale(zoomLess ? txt.getScale() : txt.getScale() / (float)zoom);
 	txt.setPosition(zoomLess ? txt.getPosition() : txt.getPosition() / (float)zoom);
 	window.draw(txt);
@@ -89,6 +92,17 @@ void QuickWindow::setZoom(int z)
 int QuickWindow::getZoom()
 {
 	return zoom;
+}
+
+void QuickWindow::setPosition(sf::Vector2i pos)
+{
+	position = pos;
+}
+
+
+sf::Vector2i QuickWindow::getPosition()
+{
+	return position;
 }
 
 
